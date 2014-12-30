@@ -25,7 +25,6 @@ void loop(){
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
-  
         if (readString.length() < 100) {
           readString += c;              
         }
@@ -40,16 +39,19 @@ void loop(){
           client.println("<H1>Acende LED</H1>");
           client.println("<hr />");
           client.println("<br />");
-           
+          
           client.println("<a href=\"?ledon\"\">Ligar o led</a>");
           client.println("<a href=\"?ledoff\"\">Desligar o led</a><br />");    
-           
+          
+          client.println("<br/>");
+          client.println(readString);
+
           client.println("</BODY>");
           client.println("</HTML>");
            
           delay(1);
           client.stop();
-           
+           //Serial.println("readString2: "+readString);
           if(readString.indexOf("?ledon") > 0)
           {
             digitalWrite(Pin, HIGH);
