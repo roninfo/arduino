@@ -3,6 +3,8 @@
 */
 #include <NRF905.h>
 #include <SPI.h>
+#include "NRF905.h"
+
 #define BUF_LEN          32
 #define CONF_LEN         10
 

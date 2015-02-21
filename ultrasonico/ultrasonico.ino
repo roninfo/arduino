@@ -12,6 +12,7 @@ char cadena[255];
 int i=0;
 long alturaCaixa=130;
 boolean dispositivoLigado = false;
+boolean permiteAcionamentoAuto = false;
 // A custom glyph (a smiley)...
 static const byte glyph[] = { B00010000, B00110100, B00110000, B00110100, B00010000 };
  
@@ -38,26 +39,33 @@ void setup(){
 }
  
 void loop(){
-  
-if(BT.available())
-  {
-    char dato=BT.read(); //Guarda los datos carácter a carácter en la variable "dato"
-    cadena[i++]=dato; //Vamos colocando cada carácter recibido en el array "cadena"
+  char dato;
+  while (BT.available()) {
+    dato=BT.read();
+    cadena[i++]=dato;
+  }
+  if (strlen(cadena) != 0) {
+     //char dato=BT.read(); //Guarda los datos carácter a carácter en la variable "dato"
+    //cadena[i++]=dato; //Vamos colocando cada carácter recibido en el array "cadena"
     
     //Cuando reciba una nueva línea (al pulsar enter en la app) entra en la función
-    if(dato=='0' || dato=='1')
+    Serial.println(cadena);
+    if(dato=='0' || dato=='1' || strstr(cadena,"auto")!=0 || strstr(cadena,"man")!=0)
     {
-      Serial.print(cadena); //Visualizamos el comando recibido en el Monitor Serial
  
       BT.write("Comando ");
       //GREEN LED
-      if(strstr(cadena,"1")!=0)
-      {
+      if(strstr(cadena,"1")!=0) {
         digitalWrite(13, HIGH);
         Serial.println("Ta ligado! ");
         BT.write("<ligar bomba> ");
       } else {
         digitalWrite(13, LOW);
+      }
+      if (strstr(cadena,"auto")!=0) {
+        permiteAcionamentoAuto=true;
+      } else if (strstr(cadena,"man")!=0) {
+        permiteAcionamentoAuto=false;
       }
       
       BT.write("executado com sucesso."); //Enviamos un retorno de carro de la app. La app ya crea una línea nueva
@@ -109,13 +117,15 @@ void drawDisplay() {
 
 void drawDispositivo() {
   int x = alturaCaixa - cm;
-  if (x <= 100) {
-    digitalWrite(13, HIGH);
-    BT.println("acionamento automatica.");
-    dispositivoLigado = true;
-  } else if (dispositivoLigado==true){
-    digitalWrite(13, LOW);
-    BT.println("desligamento automatica.");
+  if (permiteAcionamentoAuto==true) {
+    if (x <= 100) {
+        digitalWrite(13, HIGH);
+        BT.println("acionamento automatico.");
+        dispositivoLigado = true;
+    } else if (dispositivoLigado==true){
+        digitalWrite(13, LOW);
+        BT.println("desligamento automatica.");
+    }
   }
   
   BT.write("volume de agua: ");

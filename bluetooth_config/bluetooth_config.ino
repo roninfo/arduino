@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>  // Biblioteca responsável pela comunicação serial.
   
   
-SoftwareSerial mySerial(14,15); // RX, TX 
+SoftwareSerial mySerial(10,11); // RX, TX 
 String command = "";  // Responsável por reconhecer os comandos no AT.
   
 void setup()  
