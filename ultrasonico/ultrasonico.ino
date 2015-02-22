@@ -8,7 +8,7 @@ SoftwareSerial BT(10,11);
 #define trigPin 9
 #define LEDPin 13
 long duration, cm;
-char cadena[255];
+char comandosBT[255];
 int i=0;
 long alturaCaixa=130;
 boolean dispositivoLigado = false;
@@ -39,32 +39,28 @@ void setup(){
 }
  
 void loop(){
-  char dato;
+  char dadosDoBT;
   while (BT.available()) {
-    dato=BT.read();
-    cadena[i++]=dato;
+    dadosDoBT=BT.read();
+    comandosBT[i++]=dadosDoBT;
   }
-  if (strlen(cadena) != 0) {
-     //char dato=BT.read(); //Guarda los datos carácter a carácter en la variable "dato"
-    //cadena[i++]=dato; //Vamos colocando cada carácter recibido en el array "cadena"
-    
-    //Cuando reciba una nueva línea (al pulsar enter en la app) entra en la función
-    Serial.println(cadena);
-    if(dato=='0' || dato=='1' || strstr(cadena,"auto")!=0 || strstr(cadena,"man")!=0)
+  if (strlen(comandosBT) != 0) {
+    Serial.println(comandosBT);
+    if(dadosDoBT=='0' || dadosDoBT=='1' || strstr(comandosBT,"auto")!=0 || strstr(comandosBT,"man")!=0)
     {
  
       BT.write("Comando ");
-      //GREEN LED
-      if(strstr(cadena,"1")!=0) {
+      
+      if(strstr(comandosBT,"1")!=0) {
         digitalWrite(13, HIGH);
         Serial.println("Ta ligado! ");
         BT.write("<ligar bomba> ");
       } else {
         digitalWrite(13, LOW);
       }
-      if (strstr(cadena,"auto")!=0) {
+      if (strstr(comandosBT,"auto")!=0) {
         permiteAcionamentoAuto=true;
-      } else if (strstr(cadena,"man")!=0) {
+      } else if (strstr(comandosBT,"man")!=0) {
         permiteAcionamentoAuto=false;
       }
       
@@ -95,7 +91,7 @@ void clean()
 {
   for (int cl=0; cl<=i; cl++)
   {
-    cadena[cl]=0;
+    comandosBT[cl]=0;
   }
   i=0;
 }
